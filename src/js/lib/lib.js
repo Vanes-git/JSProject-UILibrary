@@ -8,6 +8,7 @@ import './components/dropdown';
 import './components/tab';
 import './components/modal';
 import './components/accordion';
+import './components/carousel';
 
 
 export default $;
