@@ -1,6 +1,6 @@
 import $ from "../core";
 
-$.prototype.modal = function () {
+$.prototype.modal = function (created) {
     for (let i = 0; i < this.length; i++) {
         const target = this[i].getAttribute("data-target");
         $(this[i]).click((e) => {
@@ -8,22 +8,28 @@ $.prototype.modal = function () {
             $(target).fadeIn(500);
             document.body.style.overflow = "hidden";
         });
-    }
 
-    const closeElements = document.querySelectorAll("[data-close]");
-    closeElements.forEach((elem) => {
-        $(elem).click(() => {
-            $(".modal").fadeOut(500);
-            document.body.style.overflow = "";
+        const closeElements = document.querySelectorAll(`${target} [data-close]`);
+        closeElements.forEach((elem) => {
+            $(elem).click(() => {
+                $(target).fadeOut(500);
+                document.body.style.overflow = "";
+                if(created) {
+                    document.querySelector(target).remove();
+                }
+            });
         });
-    });
 
-    $(".modal").click((e) => {
-        if (e.target.classList.contains("modal")) {
-            $(".modal").fadeOut(500);
-            document.body.style.overflow = "";
-        }
-    });
+        $(target).click((e) => {
+            if (e.target.classList.contains("modal")) {
+                $(target).fadeOut(500);
+                document.body.style.overflow = "";
+                if(created) {
+                    document.querySelector(target).remove();
+                }                
+            }
+        });
+    }
 };
 
 $('[data-toggle="modal"]').modal();
@@ -35,18 +41,21 @@ $.prototype.createModal = function ({ text, btns } = {}) {
         modal.setAttribute("id", this[i].getAttribute("data-target").slice(1));
 
         const buttons = [];
-        for(let j = 0; j<btns.count; j++){
-            let btn = document.createElement('button');
-            btn.classList.add('btn', ...btns.settings[j][1]);
+        for (let j = 0; j < btns.count; j++) {
+            let btn = document.createElement("button");
+            btn.classList.add("btn", ...btns.settings[j][1]);
             btn.textContent = btns.settings[j][0];
-            if(btns.settings[j][2]) {
-                btn.setAttribute('data-close', 'true');
+            if (btns.settings[j][2]) {
+                btn.setAttribute("data-close", "true");
             }
-            if(btns.settings[j][3] && typeof(btns.settings[j][3]) === 'function') {
-                btn.addEventListener('click', btns.settings[j][3]);
+            if (
+                btns.settings[j][3] &&
+                typeof btns.settings[j][3] === "function"
+            ) {
+                btn.addEventListener("click", btns.settings[j][3]);
             }
             buttons.push(btn);
-        };
+        }
 
         modal.innerHTML = `
             <div class="modal-dialog">
@@ -65,9 +74,9 @@ $.prototype.createModal = function ({ text, btns } = {}) {
             </div>
         `;
 
-        modal.querySelector('.modal-footer').append(...buttons);
+        modal.querySelector(".modal-footer").append(...buttons);
         document.body.appendChild(modal);
-        $(this[i]).modal();
+        $(this[i]).modal(true);
         $(this[i].getAttribute("data-target")).fadeIn(500);
     }
 };

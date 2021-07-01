@@ -123,7 +123,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core */ "./src/js/lib/core.js");
 
 
-_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.modal = function () {
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.modal = function (created) {
   for (let i = 0; i < this.length; i++) {
     const target = this[i].getAttribute("data-target");
     Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i]).click(e => {
@@ -131,21 +131,28 @@ _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.modal = function () {
       Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(target).fadeIn(500);
       document.body.style.overflow = "hidden";
     });
-  }
+    const closeElements = document.querySelectorAll(`${target} [data-close]`);
+    closeElements.forEach(elem => {
+      Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(elem).click(() => {
+        Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(target).fadeOut(500);
+        document.body.style.overflow = "";
 
-  const closeElements = document.querySelectorAll("[data-close]");
-  closeElements.forEach(elem => {
-    Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(elem).click(() => {
-      Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(".modal").fadeOut(500);
-      document.body.style.overflow = "";
+        if (created) {
+          document.querySelector(target).remove();
+        }
+      });
     });
-  });
-  Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(".modal").click(e => {
-    if (e.target.classList.contains("modal")) {
-      Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(".modal").fadeOut(500);
-      document.body.style.overflow = "";
-    }
-  });
+    Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(target).click(e => {
+      if (e.target.classList.contains("modal")) {
+        Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(target).fadeOut(500);
+        document.body.style.overflow = "";
+
+        if (created) {
+          document.querySelector(target).remove();
+        }
+      }
+    });
+  }
 };
 
 Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])('[data-toggle="modal"]').modal();
@@ -161,22 +168,21 @@ _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.createModal = function (
     const buttons = [];
 
     for (let j = 0; j < btns.count; j++) {
-      let btn = document.createElement('button');
-      btn.classList.add('btn', ...btns.settings[j][1]);
+      let btn = document.createElement("button");
+      btn.classList.add("btn", ...btns.settings[j][1]);
       btn.textContent = btns.settings[j][0];
 
       if (btns.settings[j][2]) {
-        btn.setAttribute('data-close', 'true');
+        btn.setAttribute("data-close", "true");
       }
 
-      if (btns.settings[j][3] && typeof btns.settings[j][3] === 'function') {
-        btn.addEventListener('click', btns.settings[j][3]);
+      if (btns.settings[j][3] && typeof btns.settings[j][3] === "function") {
+        btn.addEventListener("click", btns.settings[j][3]);
       }
 
       buttons.push(btn);
     }
 
-    ;
     modal.innerHTML = `
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -193,9 +199,9 @@ _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.createModal = function (
                 </div>
             </div>
         `;
-    modal.querySelector('.modal-footer').append(...buttons);
+    modal.querySelector(".modal-footer").append(...buttons);
     document.body.appendChild(modal);
-    Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i]).modal();
+    Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i]).modal(true);
     Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i].getAttribute("data-target")).fadeIn(500);
   }
 };
@@ -686,9 +692,11 @@ Object(_lib_lib__WEBPACK_IMPORTED_MODULE_0__["default"])("#trigger").click(() =>
     body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum minus doloremque nesciunt enim rem quam  corporis? Dolorem pariatur magnam distinctio  perferendis. Ratione dolorem voluptates iusto facilis odit veritatis, suscipit voluptatibus!"
   },
   btns: {
-    count: 2,
+    count: 3,
     settings: [["Close", ["btn-danger", "mr-10"], true], ["Save changes", ["btn-success"], false, () => {
       alert("Данные сохранены");
+    }], ["Another btn", ["btn-warning", "ml-10"], false, () => {
+      alert("Hello World");
     }]]
   }
 }));
