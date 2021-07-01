@@ -7,6 +7,7 @@ import './modules/effects';
 import './components/dropdown';
 import './components/tab';
 import './components/modal';
+import './components/accordion';
 
 
 export default $;
