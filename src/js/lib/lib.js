@@ -5,6 +5,8 @@ import './modules/handlers';
 import './modules/actions';
 import './modules/effects';
 import './components/dropdown';
+import './components/tab';
 import './components/modal';
+
 
 export default $;
